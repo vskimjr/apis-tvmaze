@@ -3,7 +3,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
-const TVMAZE_LINK = "http://api.tvmaze.com/search/shows?";
+const TVMAZE_LINK = "http://api.tvmaze.com";
 const MISSING_IMAGE = "https://tinyurl.com/tv-missing";
 
 /** Given a search term, search for tv shows that match that query.
@@ -21,19 +21,19 @@ async function getShowsByTerm(formSearchTerm) {
   const searchTerm = new URLSearchParams({
     q: formSearchTerm,
   });
-  const response = await fetch(`${TVMAZE_LINK}${searchTerm}`);
+  const response = await fetch(`${TVMAZE_LINK}/search/shows?${searchTerm}`);
 
-  const showData = JSON.parse(await response.text());
+  const showsData = await response.json();
 
-  console.log("initial gross iterable response", showData);
+  console.log("initial gross iterable response", showsData);
 
-  const showsResults = showData.map(allShows => {
-    const show = allShows.show;
+  const showsResults = showsData.map(eachShow => {
+    const show = eachShow.show;
     return {
       id: show.id,
       name: show.name,
       summary: show.summary,
-      image: show.image
+      image: show.image === null ? MISSING_IMAGE : show.image.medium
     };
   });
 
@@ -51,18 +51,11 @@ function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
-    let finalImage;
-    if (show.image === null) {
-      finalImage = MISSING_IMAGE;
-    } else {
-      finalImage = show.image.medium;
-    }
-
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src= "${finalImage}"
+              src= "${show.image}"
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
