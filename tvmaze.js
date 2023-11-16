@@ -95,10 +95,49 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+
+  const response = await fetch(`${TVMAZE_LINK}/shows/${id}/episodes`);
+
+  const episodes = await response.json();
+
+  console.log("episodes", episodes);
+
+  const episodesResult = episodes.map(eachEpisode => {
+    return {
+      id: eachEpisode.id,
+      name: eachEpisode.name,
+      season: eachEpisode.season,
+      number: eachEpisode.number
+    };
+  });
+
+  return episodesResult;
+
+}
 
 /** Write a clear docstring for this function... */
 
-// function displayEpisodes(episodes) { }
+function displayEpisodes(episodesResults) {
+
+  console.log("displayEpisodes");
+
+  for (let episodeInfo of episodesResults) {
+    const $episodeLi = $(`<li>${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})</li>`);
+    $("ul").append($episodeLi);
+  }
+
+
+}
+
+function handleEpisodesClick() {
+  const showEpisodes = getEpisodesOfShow();
+
+
+}
+
+
 
 // add other functions that will be useful / match our structure & design
+
+
