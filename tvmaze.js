@@ -116,27 +116,32 @@ async function getEpisodesOfShow(id) {
 
 }
 
-/** Write a clear docstring for this function... */
+/** Given the list of episodes creates a list "name (season, number)"
+ * and display it onto the webpage  */
 
 function displayEpisodes(episodesResults) {
-
   console.log("displayEpisodes");
 
   for (let episodeInfo of episodesResults) {
     const $episodeLi = $(`<li>${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})</li>`);
     $("ul").append($episodeLi);
   }
-
-
+  $("#episodesArea").show();
 }
 
-function handleEpisodesClick() {
-  const showEpisodes = getEpisodesOfShow();
+/** When the episode button is clicked, this conductor function is called,
+ * it pulls the episodeId and passes it onto the getEpisodesOfShow,
+ * this value is then passed to displayEpisode to create episode list. */
 
-
+async function handleEpisodesClick(evt) {
+  // $("#episodesArea").empty();
+  const episodeId =  Number($(evt.target).closest('div.Show').attr("data-show-id"));
+  console.log("episodeId=", episodeId)
+  const showEpisodes = await getEpisodesOfShow(episodeId);
+  displayEpisodes(showEpisodes)
 }
 
-
+$("#showsList").on("click", "button", handleEpisodesClick)
 
 // add other functions that will be useful / match our structure & design
 
