@@ -96,9 +96,7 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  */
 
 async function getEpisodesOfShow(id) {
-
   const response = await fetch(`${TVMAZE_LINK}/shows/${id}/episodes`);
-
   const episodes = await response.json();
 
   console.log("episodes", episodes);
@@ -113,20 +111,26 @@ async function getEpisodesOfShow(id) {
   });
 
   return episodesResult;
-
 }
 
 /** Given the list of episodes creates a list "name (season, number)"
  * and display it onto the webpage  */
 
 function displayEpisodes(episodesResults) {
+  $("ul").empty();
+
   console.log("displayEpisodes");
 
   for (let episodeInfo of episodesResults) {
-    const $episodeLi = $(`<li>${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})</li>`);
+    const $episodeLi = $(
+      `<li>
+          ${episodeInfo.name}
+          (season ${episodeInfo.season}, number ${episodeInfo.number})
+       </li>`
+       );
     $("ul").append($episodeLi);
   }
-  $("#episodesArea").show();
+  $episodesArea.show();
 }
 
 /** When the episode button is clicked, this conductor function is called,
@@ -134,7 +138,6 @@ function displayEpisodes(episodesResults) {
  * this value is then passed to displayEpisode to create episode list. */
 
 async function handleEpisodesClick(evt) {
-  // $("#episodesArea").empty();
   const episodeId =  Number($(evt.target).closest('div.Show').attr("data-show-id"));
   console.log("episodeId=", episodeId)
   const showEpisodes = await getEpisodesOfShow(episodeId);
